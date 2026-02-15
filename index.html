@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boudhina Shop | Ultimate Marketplace</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #FFD700;
+            --primary-dark: #ccac00;
+            --secondary: #25D366; 
+            --danger: #ff4757;
+            --info: #0084ff;
+            --bg: #0b0b0b;
+            --card-bg: #1a1a1a;
+            --nav-bg: rgba(15, 15, 15, 0.95);
+            --text-main: #ffffff;
+            --text-muted: #b0b0b0;
+            --border: rgba(255, 255, 255, 0.08);
+            --chat-sent: #056162;
+            --chat-received: #262d31;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--card-bg); border-radius: 10px; }
+
+        /* --- Header --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brand-logo {
+            font-weight: 900;
+            font-size: 22px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 20px;
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background: var(--danger);
+            color: white;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 50%;
+            font-weight: bold;
+            border: 2px solid var(--bg);
+        }
+
+        /* --- Content Layout --- */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page {
+            display: none;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Search & Filters --- */
+        .search-container {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 15px 45px 15px 20px;
+            border-radius: 15px;
+            color: white;
+            font-family: 'Cairo';
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        /* --- Product Cards --- */
+        .grid-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .product-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .product-card:active {
+            transform: scale(0.98);
+        }
+
+        .image-wrapper {
+            position: relative;
+            height: 200px;
+            width: 100%;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .category-tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .product-info {
+            padding: 15px;
+        }
+
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .product-title {
+            font-weight: 700;
+            font-size: 17px;
+            margin: 0;
+        }
+
+        .product-price {
+            color: var(--primary);
+            font-weight: 900;
+            font-size: 18px;
+        }
+
+        .product-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            font-family: 'Cairo';
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        /* --- Cart Page Styles --- */
+        .cart-item {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .cart-thumb {
+            width: 70px;
+            height: 70px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .cart-details {
+            flex-grow: 1;
+        }
+
+        .cart-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .btn-small-chat {
+            background: var(--info);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        .btn-small-del {
+            background: var(--danger);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        /* --- Modern Chat Window --- */
+        .chat-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 15px 20px;
+            background: var(--nav-bg);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .chat-user-info b {
+            display: block;
+            font-size: 15px;
+        }
+
+        .chat-user-info small {
+            color: var(--secondary);
+            font-size: 11px;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+            background-blend-mode: overlay;
+            background-color: #0a0a0a;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            font-size: 14px;
+            position: relative;
+            line-height: 1.4;
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            background: var(--chat-sent);
+            color: white;
+            border-radius: 15px 15px 0 15px;
+        }
+
+        .message.received {
+            align-self: flex-start;
+            background: var(--chat-received);
+            color: white;
+            border-radius: 15px 15px 15px 0;
+        }
+
+        .message-time {
+            font-size: 9px;
+            display: block;
+            margin-top: 5px;
+            opacity: 0.7;
+            text-align: left;
+        }
+
+        .chat-footer {
+            padding: 15px;
+            background: var(--nav-bg);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex-grow: 1;
+            background: #222;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            color: white;
+            outline: none;
+            font-family: 'Cairo';
+        }
+
+        .send-btn {
+            background: var(--primary);
+            color: #000;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* --- Bottom Navigation --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 70px;
+            background: var(--nav-bg);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 600;
+            transition: var(--transition);
+            background: none;
+            border: none;
+            cursor: pointer;
+            gap: 4px;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        /* --- Toast Notification --- */
+        #toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card-bg);
+            border: 1px solid var(--primary);
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-size: 13px;
+            z-index: 5000;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* --- Empty States --- */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .empty-state i {
+            font-size: 50px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        /* --- Sell Form --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .form-control {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 10px;
+            color: white;
+            font-family: 'Cairo';
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand-logo">
+            <i class="fa-solid fa-bolt-lightning"></i>
+            Boudhina Shop
+        </div>
+        <div class="header-actions">
+            <button class="icon-btn" onclick="app.navigate('cart')">
+                <i class="fa-solid fa-basket-shopping"></i>
+                <span class="badge" id="cart-badge">0</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="page-home" class="page active">
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" class="search-input" placeholder="ابحث عن ألعاب، حسابات، أو سكنات..." id="mainSearch">
+            </div>
+
+            <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h3 style="margin:0">العروض المميزة</h3>
+                <span style="font-size:12px; color:var(--primary)">عرض الكل</span>
+            </div>
+
+            <div id="products-list" class="grid-list">
+                </div>
+        </div>
+
+        <div id="page-cart" class="page">
+            <div style="text-align:center; margin-bottom:30px;">
+                <h2 style="margin:0">قفتي</h2>
+                <p style="color:var(--text-muted); font-size:13px;">تحدث مع البائعين لإتمام الشراء</p>
+            </div>
+            <div id="cart-list">
+                </div>
+        </div>
+
+        <div id="page-sell" class="page">
+            <h2>انشر عرضك مجاناً</h2>
+            <div class="form-group">
+                <label>اسم اللعبة</label>
+                <input type="text" id="sell-title" class="form-control" placeholder="مثلاً: Free Fire - Account">
+            </div>
+            <div class="form-group">
+                <label>السعر بالدينار التونسي (DT)</label>
+                <input type="number" id="sell-price" class="form-control" placeholder="0.00">
+            </div>
+            <div class="form-group">
+                <label>وصف الحساب</label>
+                <textarea id="sell-desc" class="form-control" rows="4" placeholder="اكتب تفاصيل المستوى والسكنات..."></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="app.postAd()">
+                <i class="fa-solid fa-paper-plane"></i> نشر العرض الآن
+            </button>
+        </div>
+
+        <div id="page-settings" class="page">
+            <div style="text-align:center; padding:30px 0;">
+                <div style="width:80px; height:80px; background:var(--card-bg); border-radius:50%; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; border:2px solid var(--primary)">
+                    <i class="fa-solid fa-user-ninja" style="font-size:30px; color:var(--primary)"></i>
+                </div>
+                <h3 style="margin:0">مرحباً، لاعب بوضينة</h3>
+                <p style="color:var(--text-muted); font-size:12px">حساب موثق <i class="fa-solid fa-circle-check" style="color:var(--info)"></i></p>
+            </div>
+
+            <div style="background:var(--card-bg); border-radius:15px; overflow:hidden;">
+                <div style="padding:15px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+                    <span>وضع الظلام</span>
+                    <i class="fa-solid fa-moon" style="color:var(--primary)"></i>
+                </div>
+                <div style="padding:15px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;" onclick="app.toast('قريباً...')">
+                    <span>تغيير اللغة</span>
+                    <span>العربية</span>
+                </div>
+                <div style="padding:15px; display:flex; justify-content:space-between; align-items:center; color:var(--danger)" onclick="location.reload()">
+                    <span>تسجيل الخروج</span>
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="chat-window" class="chat-overlay">
+        <div class="chat-header">
+            <button class="icon-btn" onclick="app.closeChat()">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+            <div class="chat-user-info">
+                <b id="chat-partner-name">اسم البائع</b>
+                <small>نشط الآن</small>
+            </div>
+        </div>
+        <div id="chat-messages" class="chat-messages">
+            </div>
+        <div class="chat-footer">
+            <input type="text" id="chat-input" class="chat-input" placeholder="اكتب رسالتك هنا...">
+            <button class="send-btn" onclick="app.sendMsg()">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="toast"></div>
+
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="app.navigate('home', this)">
+            <i class="fa-solid fa-house-chimney"></i>
+            <span>الرئيسية</span>
+        </button>
+        <button class="nav-item" onclick="app.navigate('sell', this)">
+            <i class="fa-solid fa-circle-plus"></i>
+            <span>بيع</span>
+        </button>
+        <button class="nav-item" onclick="app.navigate('cart', this)">
+            <i class="fa-solid fa-basket-shopping"></i>
+            <span>قفتي</span>
+        </button>
+        <button class="nav-item" onclick="app.navigate('settings', this)">
+            <i class="fa-solid fa-user-gear"></i>
+            <span>حسابي</span>
+        </button>
+    </nav>
+
+    <script>
+        /**
+         * Boudhina Shop Core Engine
+         * Total logic to handle products, cart, and internal chat
+         */
+        const app = {
+            state: {
+                products: [
+                    { id: 101, title: "حساب فري فاير نادر", price: 85, game: "Free Fire", desc: "يحتوي على سكنات قديمة ليفل 65، رقصات العرش والقلب، وسكنات أسلحة نادرة جداً.", seller: "Hamza_Gaming", img: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500" },
+                    { id: 102, title: "ببجي موبايل - ليفل 72", price: 210, game: "PUBG Mobile", desc: "حساب مشحون من الموسم 4، فيه إم فور الثلجي مطور ليفل 4 وبدلات أسطورية.", seller: "Oussema_Pro", img: "https://images.unsplash.com/photo-1550745674-9182175b127c?w=500" },
+                    { id: 103, title: "حساب لول مستحوذ", price: 45, game: "League of Legends", desc: "Level 300+, 150 Skins, All Champions unlocked. Gold Rank.", seller: "Skander_Tn", img: "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=500" },
+                    { id: 104, title: "قراند 5 - مليارات", price: 30, game: "GTA V", desc: "حساب مهكر فيه مليارات وسيارات نادرة وكل الكراجات مفتوحة.", seller: "Karim_Mod", img: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500" }
+                ],
+                cart: JSON.parse(localStorage.getItem('b_cart')) || [],
+                chats: JSON.parse(localStorage.getItem('b_chats')) || [],
+                activeChat: null
+            },
+
+            init() {
+                this.renderProducts();
+                this.updateUI();
+                this.setupSearch();
+                console.log("Boudhina Shop Engine Ready.");
+            },
+
+            // Navigation Logic
+            navigate(pageId, btn) {
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(`page-${pageId}`).classList.add('active');
+                
+                if(btn) {
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                    btn.classList.add('active');
+                }
+
+                if(pageId === 'cart') this.renderCart();
+                window.scrollTo(0,0);
+            },
+
+            // Render Marketplace
+            renderProducts(data = this.state.products) {
+                const container = document.getElementById('products-list');
+                container.innerHTML = "";
+                
+                data.forEach(p => {
+                    container.innerHTML += `
+                        <div class="product-card">
+                            <div class="image-wrapper">
+                                <img src="${p.img}" class="product-img" alt="${p.title}">
+                                <span class="category-tag">${p.game}</span>
+                            </div>
+                            <div class="product-info">
+                                <div class="product-header">
+                                    <h4 class="product-title">${p.title}</h4>
+                                    <span class="product-price">${p.price} DT</span>
+                                </div>
+                                <p class="product-desc">${p.desc}</p>
+                                <button class="btn btn-primary" onclick="app.addToCart(${p.id})">
+                                    <i class="fa-solid fa-cart-plus"></i> أضف إلى القفة
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+            },
+
+            // Search Logic
+            setupSearch() {
+                document.getElementById('mainSearch').addEventListener('input', (e) => {
+                    const q = e.target.value.toLowerCase();
+                    const filtered = this.state.products.filter(p => 
+                        p.title.toLowerCase().includes(q) || p.game.toLowerCase().includes(q)
+                    );
+                    this.renderProducts(filtered);
+                });
+            },
+
+            // Cart Logic
+            addToCart(id) {
+                const item = this.state.products.find(p => p.id === id);
+                if(this.state.cart.some(c => c.id === id)) {
+                    this.toast("هذا المنتج موجود بالفعل في القفة");
+                    return;
+                }
+                this.state.cart.push(item);
+                this.save();
+                this.updateUI();
+                this.toast("تمت الإضافة إلى القفة بنجاح");
+            },
+
+            removeFromCart(id) {
+                this.state.cart = this.state.cart.filter(c => c.id !== id);
+                this.save();
+                this.updateUI();
+                this.renderCart();
+                this.toast("تم الحذف من القفة");
+            },
+
+            renderCart() {
+                const container = document.getElementById('cart-list');
+                container.innerHTML = "";
+
+                if(this.state.cart.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                            <h3>قفتك فارغة</h3>
+                            <p>تصفح السوق وأضف بعض العروض الآن</p>
+                            <button class="btn btn-primary" style="width:auto; margin:0 auto;" onclick="app.navigate('home')">تسوق الآن</button>
+                        </div>`;
+                    return;
+                }
+
+                this.state.cart.forEach(item => {
+                    container.innerHTML += `
+                        <div class="cart-item">
+                            <img src="${item.img}" class="cart-thumb">
+                            <div class="cart-details">
+                                <b style="font-size:14px">${item.title}</b>
+                                <div style="color:var(--primary); font-weight:700; font-size:13px">${item.price} DT</div>
+                                <div style="font-size:10px; color:var(--text-muted)">البائع: ${item.seller}</div>
+                            </div>
+                            <div class="cart-actions">
+                                <button class="btn-small-chat" onclick="app.openChat('${item.seller}')">
+                                    <i class="fa-solid fa-comments"></i> دردشة
+                                </button>
+                                <button class="btn-small-del" onclick="app.removeFromCart(${item.id})">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+            },
+
+            // Chat Logic
+            openChat(seller) {
+                this.state.activeChat = seller;
+                document.getElementById('chat-partner-name').innerText = seller;
+                document.getElementById('chat-window').style.display = 'flex';
+                this.renderMessages();
+            },
+
+            closeChat() {
+                document.getElementById('chat-window').style.display = 'none';
+            },
+
+            sendMsg() {
+                const input = document.getElementById('chat-input');
+                const text = input.value.trim();
+                if(!text) return;
+
+                const msg = {
+                    id: Date.now(),
+                    partner: this.state.activeChat,
+                    text: text,
+                    type: 'sent',
+                    time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                };
+
+                this.state.chats.push(msg);
+                input.value = "";
+                this.renderMessages();
+                this.save();
+
+                // Mock Auto Reply
+                setTimeout(() => {
+                    const reply = {
+                        id: Date.now() + 1,
+                        partner: this.state.activeChat,
+                        text: "أهلاً بك! نعم العرض لا يزال متوفراً. هل تريد الدفع عبر D17 أو رصيد هاتف؟",
+                        type: 'received',
+                        time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                    };
+                    this.state.chats.push(reply);
+                    this.renderMessages();
+                    this.save();
+                }, 1500);
+            },
+
+            renderMessages() {
+                const container = document.getElementById('chat-messages');
+                container.innerHTML = "";
+                
+                const filtered = this.state.chats.filter(c => c.partner === this.state.activeChat);
+                filtered.forEach(m => {
+                    container.innerHTML += `
+                        <div class="message ${m.type}">
+                            ${m.text}
+                            <span class="message-time">${m.time}</span>
+                        </div>
+                    `;
+                });
+                container.scrollTop = container.scrollHeight;
+            },
+
+            // Ad Posting
+            postAd() {
+                const title = document.getElementById('sell-title').value;
+                const price = document.getElementById('sell-price').value;
+                const desc = document.getElementById('sell-desc').value;
+
+                if(!title || !price) {
+                    this.toast("الرجاء ملء البيانات الأساسية");
+                    return;
+                }
+
+                const newAd = {
+                    id: Date.now(),
+                    title: title,
+                    price: parseFloat(price),
+                    game: "Other",
+                    desc: desc,
+                    seller: "أنت",
+                    img: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=500"
+                };
+
+                this.state.products.unshift(newAd);
+                this.renderProducts();
+                this.navigate('home');
+                this.toast("تم نشر عرضك بنجاح في السوق!");
+                
+                // Reset form
+                document.getElementById('sell-title').value = "";
+                document.getElementById('sell-price').value = "";
+                document.getElementById('sell-desc').value = "";
+            },
+
+            // Helpers
+            updateUI() {
+                document.getElementById('cart-badge').innerText = this.state.cart.length;
+            },
+
+            save() {
+                localStorage.setItem('b_cart', JSON.stringify(this.state.cart));
+                localStorage.setItem('b_chats', JSON.stringify(this.state.chats));
+            },
+
+            toast(msg) {
+                const t = document.getElementById('toast');
+                t.innerText = msg;
+                t.style.display = 'block';
+                setTimeout(() => { t.style.display = 'none'; }, 3000);
+            }
+        };
+
+        // Initialize App
+        app.init();
+    </script>
+</body>
+</html>
